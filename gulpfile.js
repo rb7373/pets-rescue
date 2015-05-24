@@ -7,7 +7,7 @@ var wrench = require('wrench');
 var $ = require('gulp-load-plugins')();
 
 var options = {
-  src: 'src',
+  src: 'src/client',
   dist: 'dist',
   tmp: '.tmp',
   e2e: 'e2e',

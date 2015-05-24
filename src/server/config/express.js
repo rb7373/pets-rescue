@@ -18,6 +18,7 @@ var passport = require('passport');
 var session = require('express-session');
 var mongoStore = require('connect-mongo')(session);
 var mongoose = require('mongoose');
+var four0four = require('./../utils/404')();
 
 module.exports = function (app) {
   var env = app.get('env');
@@ -40,6 +41,9 @@ module.exports = function (app) {
     store: new mongoStore({mongooseConnection: mongoose.connection})
   }));
 
+  var client;
+  var tmp;
+
   if ('production' === env) {
     app.use(favicon(path.join(config.root, 'public', 'favicon.ico')));
     app.use(express.static(path.join(config.root, 'public')));
@@ -48,13 +52,36 @@ module.exports = function (app) {
   }
 
   if ('development' === env || 'test' === env) {
-    app.use(require('connect-livereload')());
-    app.use(express.static(path.join(config.root, '.tmp')));
+    client = path.join(config.root, 'src/client');
+    tmp = path.join(config.root, '.tmp/serve/');
+    var bower = path.join(config.root, 'bower_components/');
+    var index = path.join(config.root, 'src/client/index.html');
+
     console.log('Directories: ');
-    console.log(path.join(config.root, 'client'));
-    app.use(express.static(path.join(config.root, 'client')));
-    app.set('appPath', 'client');
+    console.log('Client: ' + client);
+    console.log('tmp: ' + tmp);
+    console.log('bower: ' + bower);
+
+    console.log('** DEV **');
+    app.use(express.static(client));
+    app.use(express.static(bower));
+    app.use(express.static(tmp));
+    // All the assets are served at this point.
+    // Any invalid calls for templateUrls are under app/* and should return 404
+    app.use('/app/*', function(req, res, next) {
+      four0four.send404(req, res);
+    });
+    // Any deep link calls should return index.html
+    app.use('/*', express.static(index));
     app.use(morgan('dev'));
     app.use(errorHandler()); // Error handler - has to be last
+
+    //app.use(require('connect-livereload')());
+    //app.use(express.static(tmp));
+    //app.use(express.static(client));
+    //app.use(express.static(bower));
+    //app.set('appPath', 'client');
+    //app.use(morgan('dev'));
+    //app.use(errorHandler()); // Error handler - has to be last
   }
 };

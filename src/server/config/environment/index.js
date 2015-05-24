@@ -2,6 +2,7 @@
 
 var path = require('path');
 var _ = require('lodash');
+var root = require('root-path');
 
 function requiredProcessEnv(name) {
   if (!process.env[name]) {
@@ -16,7 +17,7 @@ var all = {
   env: process.env.NODE_ENV,
 
   // Root path of server
-  root: path.normalize(__dirname + '/../../..'),
+  root: root(),
 
   // Server port
   port: process.env.PORT || 9000,

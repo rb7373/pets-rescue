@@ -7,6 +7,17 @@ var wrench = require('wrench');
 var $ = require('gulp-load-plugins')();
 
 var options = {
+  /**
+   * Node settings
+   */
+  nodeServer: './src/server/app.js',
+  server : './src/server/',
+  defaultPort: '9001',
+  browserSyncPort: '7070',
+  /**
+   * browser sync
+   */
+  browserReloadDelay: 1000,
   src: 'src/client',
   dist: 'dist',
   tmp: '.tmp',
